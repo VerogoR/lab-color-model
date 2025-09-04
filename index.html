@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Цветовые модели: RGB ↔ CMYK ↔ HLS</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Цветовые модели: RGB ↔ CMYK ↔ HLS</h1>
+        <div class="grid">
+            <div class="panel">
+                <div id="preview" class="preview"></div>
+                <div class="hex-row">
+                    <label for="hexInput">HEX</label>
+                    <input id="hexInput" type="text" placeholder="#RRGGBB" value="#4aa3ff" />
+                    <div class="small">Напр.: <span class="kbd">#1A2B3C</span></div>
+                </div>
+                <div class="section-title">Палитра</div>
+                <div class="picker-row">
+                    <input id="nativePicker" type="color" value="#4aa3ff" />
+                    <div class="small">Можно кликать по образцам ниже</div>
+                </div>
+                <div class="swatches" id="swatches"></div>
+                <div id="warning" class="warning">⚠ Произведено обрезание/округление значений для соответствия допустимому диапазону.</div>
+            </div>
+            <div class="panel">
+                <div class="section-title">RGB</div>
+                <div class="row"><label for="r" title="R — Red / Красный">R — Красный (0–255)</label><input id="rRange" type="range" min="0" max="255" value="74"><input id="r" type="number" min="0" max="255" value="74"></div>
+                <div class="row"><label for="g" title="G — Green / Зелёный">G — Зелёный (0–255)</label><input id="gRange" type="range" min="0" max="255" value="163"><input id="g" type="number" min="0" max="255" value="163"></div>
+                <div class="row"><label for="b" title="B — Blue / Синий">B — Синий (0–255)</label><input id="bRange" type="range" min="0" max="255" value="255"><input id="b" type="number" min="0" max="255" value="255"></div>
+
+                <div class="section-title">HLS</div>
+                <div class="row"><label for="h" title="H — Hue / Тон">H — Тон (0–360)</label><input id="hRange" type="range" min="0" max="360" value="207"><input id="h" type="number" min="0" max="360" value="207"></div>
+                <div class="row"><label for="l" title="L — Lightness / Светлота">L — Светлота (0–100)</label><input id="lRange" type="range" min="0" max="100" value="73"><input id="l" type="number" min="0" max="100" value="73"></div>
+                <div class="row"><label for="s" title="S — Saturation / Насыщенность">S — Насыщенность (0–100)</label><input id="sRange" type="range" min="0" max="100" value="100"><input id="s" type="number" min="0" max="100" value="100"></div>
+
+                <div class="section-title">CMYK</div>
+                <div class="row"><label for="c" title="C — Cyan / Голубой">C — Голубой (0–100)</label><input id="cRange" type="range" min="0" max="100" value="71"><input id="c" type="number" min="0" max="100" value="71"></div>
+                <div class="row"><label for="m" title="M — Magenta / Пурпурный">M — Пурпурный (0–100)</label><input id="mRange" type="range" min="0" max="100" value="36"><input id="m" type="number" min="0" max="100" value="36"></div>
+                <div class="row"><label for="y" title="Y — Yellow / Жёлтый">Y — Жёлтый (0–100)</label><input id="yRange" type="range" min="0" max="100" value="0"><input id="y" type="number" min="0" max="100" value="0"></div>
+                <div class="row"><label for="k" title="K — Key (Black) / Чёрный">K — Чёрный (0–100)</label><input id="kRange" type="range" min="0" max="100" value="0"><input id="k" type="number" min="0" max="100" value="0"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./app.js"></script>
+</body>
+</html>
