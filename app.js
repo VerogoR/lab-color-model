@@ -1,8 +1,6 @@
-// Helpers
 function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
 function round(value, precision = 0) { const p = Math.pow(10, precision); return Math.round(value * p) / p; }
 
-// RGB <-> HSL (used as HLS layout: H, L, S)
 function rgbToHsl(r, g, b) {
   r /= 255; g /= 255; b /= 255;
   const max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -43,7 +41,6 @@ function hslToRgb(h, s, l) {
   return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
 }
 
-// RGB <-> CMYK
 function rgbToCmyk(r, g, b) {
   const rr = r / 255, gg = g / 255, bb = b / 255;
   const k = 1 - Math.max(rr, gg, bb);
@@ -61,7 +58,6 @@ function cmykToRgb(c, m, y, k) {
   return { r: Math.round(r), g: Math.round(g), b: Math.round(b) };
 }
 
-// HEX helpers
 function rgbToHex(r, g, b) { return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase(); }
 function hexToRgb(hex) {
   const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
@@ -69,7 +65,6 @@ function hexToRgb(hex) {
   return { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) };
 }
 
-// Elements
 const els = {
   preview: document.getElementById('preview'),
   warning: document.getElementById('warning'),
@@ -101,12 +96,9 @@ function updateAllFromRGB(r, g, b, { fromUser = false } = {}) {
   const gg = clamp(Math.round(g), 0, 255); if (gg !== g) clipped = true;
   const bb = clamp(Math.round(b), 0, 255); if (bb !== b) clipped = true;
 
-  // RGB -> HSL
   const { h, s, l } = rgbToHsl(rr, gg, bb);
-  // RGB -> CMYK
   const { c, m, y, k } = rgbToCmyk(rr, gg, bb);
 
-  // Apply UI
   [els.r.value, els.g.value, els.b.value] = [rr, gg, bb];
   [els.rRange.value, els.gRange.value, els.bRange.value] = [rr, gg, bb];
   const hh = round(h, 1), ss = round(s, 1), ll = round(l, 1);
@@ -131,7 +123,6 @@ function updateAllFromHLS(h, l, s) {
   const { r, g, b } = hslToRgb(hh, ss, ll);
   isSyncing = false;
   updateAllFromRGB(r, g, b, { fromUser: true });
-  // Keep user's HLS as source of truth to avoid jumping
   [els.h.value, els.l.value, els.s.value] = [round(hh, 1), round(ll, 1), round(ss, 1)];
   [els.hRange.value, els.lRange.value, els.sRange.value] = [round(hh, 1), round(ll, 1), round(ss, 1)];
   showWarning(clipped);
@@ -147,7 +138,6 @@ function updateAllFromCMYK(c, m, y, k) {
   const { r, g, b } = cmykToRgb(cc, mm, yy, kk);
   isSyncing = false;
   updateAllFromRGB(r, g, b, { fromUser: true });
-  // Keep user's CMYK as source of truth to avoid jumping
   const ccr = round(cc, 1), mmr = round(mm, 1), yyr = round(yy, 1), kkr = round(kk, 1);
   [els.c.value, els.m.value, els.y.value, els.k.value] = [ccr, mmr, yyr, kkr];
   [els.cRange.value, els.mRange.value, els.yRange.value, els.kRange.value] = [ccr, mmr, yyr, kkr];
@@ -156,7 +146,7 @@ function updateAllFromCMYK(c, m, y, k) {
 
 function updateAllFromHex(hex) {
   const rgb = hexToRgb(hex);
-  if (!rgb) return; // ignore invalid
+  if (!rgb) return;
   updateAllFromRGB(rgb.r, rgb.g, rgb.b, { fromUser: true });
 }
 
@@ -177,31 +167,24 @@ function buildSwatches() {
 }
 
 function attachEvents() {
-  // RGB number inputs and ranges
   [['r','rRange'],['g','gRange'],['b','bRange']].forEach(([n, r]) => {
     els[n].addEventListener('input', () => updateAllFromRGB(+els.r.value, +els.g.value, +els.b.value, { fromUser: true }));
     els[r].addEventListener('input', () => { els[n].value = els[r].value; updateAllFromRGB(+els.r.value, +els.g.value, +els.b.value, { fromUser: true }); });
   });
-  // HLS inputs and ranges (note: UI order H, L, S)
   [['h','hRange'],['l','lRange'],['s','sRange']].forEach(([n, r]) => {
     const handler = () => updateAllFromHLS(+els.h.value, +els.l.value, +els.s.value);
     els[n].addEventListener('input', handler);
     els[r].addEventListener('input', () => { els[n].value = els[r].value; handler(); });
   });
-  // CMYK inputs and ranges
   [['c','cRange'],['m','mRange'],['y','yRange'],['k','kRange']].forEach(([n, r]) => {
     const handler = () => updateAllFromCMYK(+els.c.value, +els.m.value, +els.y.value, +els.k.value);
     els[n].addEventListener('input', handler);
     els[r].addEventListener('input', () => { els[n].value = els[r].value; handler(); });
   });
-
-  // HEX input
   els.hex.addEventListener('input', () => updateAllFromHex(els.hex.value));
-  // Native color picker
   els.picker.addEventListener('input', () => updateAllFromHex(els.picker.value));
 }
 
-// Init
 buildSwatches();
 attachEvents();
 updateAllFromHex('#4aa3ff');
